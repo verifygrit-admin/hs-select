@@ -197,6 +197,7 @@
   /* ── Tab Panels ── */
   .panel { display: none; padding: 20px; }
   .panel.active { display: block; }
+  .panel-inner { max-width: 1200px; margin: 0 auto; }
 
   /* ── Section Headers ── */
   .section-label {
@@ -437,7 +438,7 @@
   /* ── Overview Blocks ── */
   .info-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
     gap: 14px;
     margin-bottom: 20px;
   }
@@ -491,7 +492,7 @@
   }
 
   /* ── Mobile Responsive ── */
-  @media (max-width: 480px) {
+  @media (max-width: 520px) {
     .header-title { font-size: 0.95rem; }
     .profile-name { font-size: 1.1rem; }
     .section-title { font-size: 1.1rem; }
@@ -499,6 +500,7 @@
     .coach-grid { grid-template-columns: 1fr; }
     .info-grid { grid-template-columns: 1fr; }
     .tab-btn { padding: 13px 12px; font-size: 0.8rem; }
+    .info-label { width: 110px; }
   }
 </style>
 </head>
@@ -553,6 +555,7 @@
 
   <!-- ── OVERVIEW TAB ── -->
   <div id="panel-overview" class="panel active">
+  <div class="panel-inner">
     <div class="section-label">About This Report</div>
     <div class="section-title">What We Built for Ian &amp; Ms. Walker</div>
     <div class="section-desc">
@@ -597,26 +600,32 @@
       <div class="legend-item"><span class="tier tier-silver">SILVER</span> Score 50–64 &mdash; Strong Option</div>
       <div class="legend-item"><span class="tier tier-bronze">BRONZE</span> Score below 50 &mdash; Worth Knowing</div>
     </div>
+  </div><!-- /.panel-inner -->
   </div>
 
   <!-- ── GREENSBORO TAB ── -->
   <div id="panel-greensboro" class="panel">
+  <div class="panel-inner">
     <div class="section-label">Option 1 &mdash; Greensboro, NC</div>
     <div class="section-title">Greensboro Area Schools</div>
     <div class="section-desc">These schools are all within driving distance of Greensboro, where Ian's older brother lives. Greensboro is about 51 miles from Goldston — a quick, easy drive for Ms. Walker on weekends.</div>
     <div class="table-scroll" id="table-greensboro"></div>
   </div>
+  </div>
 
   <!-- ── TIDEWATER TAB ── -->
   <div id="panel-tidewater" class="panel">
+  <div class="panel-inner">
     <div class="section-label">Option 2 &mdash; Tidewater, VA</div>
     <div class="section-title">Tidewater Virginia Schools</div>
     <div class="section-desc">These schools are in the Virginia Beach, Norfolk, Chesapeake, Newport News, and Williamsburg area — one of the best high school football regions in the entire country. The drive from Goldston is about 4.5 hours.</div>
     <div class="table-scroll" id="table-tidewater"></div>
   </div>
+  </div>
 
   <!-- ── TOP 15 TAB ── -->
   <div id="panel-top15" class="panel">
+  <div class="panel-inner">
     <div class="section-label">Best of Both Regions</div>
     <div class="section-title">Top 15 Combined Rankings</div>
     <div class="section-desc">All schools from both regions ranked together. The two Platinum schools at the top are the best programs Ian could attend — both are free public schools with elite football and strong academics.</div>
@@ -625,9 +634,11 @@
     </div>
     <div class="table-scroll" id="table-top15"></div>
   </div>
+  </div>
 
   <!-- ── COACHES TAB ── -->
   <div id="panel-coaches" class="panel">
+  <div class="panel-inner">
     <div class="section-label">Who to Contact</div>
     <div class="section-title">Head Coach Directory</div>
     <div class="section-desc">These are the top coaches at the best schools on Ian's list. Reaching out to the right coach — the right way — is one of the most important steps in this process. GrittyOS recommends starting with the top 2.</div>
@@ -640,7 +651,8 @@
     </div>
 
     <div class="coach-grid" id="coach-grid"></div>
-  </div>
+  </div><!-- /.panel-inner -->
+  </div><!-- /#panel-coaches -->
 
   <div class="footer">
     GrittyOS &copy; 2026 &mdash; Prepared privately for the Walker Family &mdash; Do not distribute

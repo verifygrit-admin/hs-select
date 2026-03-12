@@ -756,7 +756,7 @@ function tierLabel(score) {
 }
 function scoreBar(score, max=100) {
   const pct = Math.round((score / max) * 100);
-  const color = score >= 80 ? "#7c3aed" : score >= 65 ? "#b45309" : score >= 50 ? "#16a34a" : "#92400e";
+  const color = score >= 80 ? "#6d28d9" : score >= 65 ? "#d97706" : score >= 50 ? "#475569" : "#92400e";
   return `<div class="score-wrap">
     <span class="score-num" style="color:${color}">${score}</span>
     <div class="score-bar-bg"><div class="score-bar-fill" style="width:${pct}%;background:${color}"></div></div>

@@ -1001,6 +1001,12 @@ function switchTab(id, btn) {
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
   document.getElementById("panel-" + id).classList.add("active");
   btn.classList.add("active");
+  if (id === "map") {
+    setTimeout(() => {
+      initMap();
+      if (leafletMap) leafletMap.invalidateSize();
+    }, 50);
+  }
 }
 
 // ── Data ───────────────────────────────────────────────────────────────────────
@@ -1431,17 +1437,6 @@ function closeCompareModal() {
   document.getElementById("compare-modal").classList.remove("open");
 }
 
-// ── Override switchTab to lazy-init map ────────────────────────────────────────
-const _origSwitchTab = switchTab;
-function switchTab(id, btn) {
-  _origSwitchTab(id, btn);
-  if (id === "map") {
-    setTimeout(() => {
-      initMap();
-      if (leafletMap) leafletMap.invalidateSize();
-    }, 50);
-  }
-}
 </script>
 </body>
 </html>

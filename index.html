@@ -517,9 +517,12 @@
   .map-wrap {
     position: relative;
     flex: 1;
-    min-height: calc(100vh - 200px);
   }
-  #map { width: 100%; height: 100%; }
+  #map {
+    width: 100%;
+    height: calc(100vh - 210px);
+    min-height: 400px;
+  }
 
   /* ── Map Legend ── */
   .map-legend {
@@ -1261,7 +1264,7 @@ function initMap() {
     tap: false,
   });
 
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
     attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
     maxZoom: 18,
   }).addTo(leafletMap);
@@ -1307,7 +1310,7 @@ function showSchoolPanel(school) {
     <div class="sp-actions">
       <button class="sp-btn sp-btn-compare ${inCompare ? "selected" : ""}"
         id="sp-compare-btn"
-        onclick="toggleCompare('${school.name.replace(/'/g,"\\'")}')">
+        data-school="${school.name.replace(/"/g,'&quot;')}">
         ${inCompare ? "Remove from Compare" : "+ Add to Compare"}
       </button>
       ${school.maxpreps ? `<a href="${school.maxpreps}" target="_blank" class="sp-btn sp-btn-maxpreps" style="display:flex;align-items:center;justify-content:center;text-decoration:none">MaxPreps</a>` : ""}
@@ -1316,6 +1319,11 @@ function showSchoolPanel(school) {
   `;
 
   document.getElementById("school-panel").classList.add("open");
+
+  // Wire compare button via event delegation (avoids apostrophe issues in inline onclick)
+  document.getElementById("sp-compare-btn").addEventListener("click", function() {
+    toggleCompare(this.dataset.school);
+  });
 }
 
 function closeSchoolPanel() {

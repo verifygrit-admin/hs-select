@@ -257,7 +257,11 @@
 
   /* ── Map Panel ── */
   #panel-map { padding: 0; }
-  #panel-map.active { display: flex; flex-direction: column; }
+  #panel-map.active {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 172px); /* viewport minus header+profile+tabs */
+  }
   .map-filters {
     background: var(--surface); border-bottom: 1px solid var(--border);
     padding: 10px 16px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
@@ -274,8 +278,8 @@
   .map-chip:hover { border-color: var(--accent); color: var(--accent); }
   .map-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
   .map-filter-sep { width: 1px; height: 20px; background: var(--border2); flex-shrink: 0; margin: 0 4px; }
-  .map-wrap { position: relative; flex: 1; }
-  #map { width: 100%; height: calc(100vh - 260px); min-height: 380px; }
+  .map-wrap { position: relative; flex: 1; min-height: 0; }
+  #map { position: absolute; inset: 0; }
 
   /* ── Map Legend ── */
   .map-legend {

@@ -716,12 +716,32 @@ const COACHES = [
 
 // ── School Website URLs ─────────────────────────────────────────────────────────
 const SCHOOL_URLS = {
+  // Greensboro — GCS subdomain pattern (confirmed gcsnc.com)
   "Grimsley High School":          "https://grimsley.gcsnc.com",
-  "Cardinal Gibbons HS":           "https://www.cghsnc.org",
-  "Oscar Smith High School":       "https://oscarsmithfootball.com",
-  "Maury High School":             "https://www.mauryhighschool.com",
-  "Bishop McGuinness Catholic HS": "https://www.bmhs.us",
-  "Phoebus High School":           "https://phs.hampton.k12.va.us",
+  "Dudley High School":            "https://dudley.gcsnc.com",
+  "Page High School":              "https://page.gcsnc.com",
+  "Northern Guilford High School": "https://northernguilford.gcsnc.com",
+  "Southeast Guilford HS":         "https://southeastguilford.gcsnc.com",
+  // Greensboro — Forsyth County
+  "East Forsyth High School":      "https://eastforsyth.forsyth.k12.nc.us",
+  // Greensboro — Private
+  "Cardinal Gibbons HS":           "https://www.cghsnc.org",          // confirmed in data-sources.txt
+  "Bishop McGuinness Catholic HS": "https://www.bmhs.us",             // confirmed in data-sources.txt
+  // Tidewater — Chesapeake City Public Schools
+  "Oscar Smith High School":       "https://oshs.cpschools.com",
+  // Tidewater — Norfolk Public Schools
+  "Maury High School":             "https://maury.nps.k12.va.us",
+  // Tidewater — Hampton City Schools
+  "Phoebus High School":           "https://phoebus.hampton.k12.va.us",
+  // Tidewater — Williamsburg-James City County
+  "Lafayette High School":         "https://lafayette.wjccschools.org",
+  // Tidewater — Newport News City Public Schools
+  "Warwick High School":           "https://warwick.nn.k12.va.us",
+  "Woodside High School":          "https://woodside.nn.k12.va.us",
+  // Tidewater — Suffolk City Schools
+  "King's Fork High School":       "https://kfhs.spsk12.net",
+  // Tidewater — Virginia Beach City Public Schools
+  "Green Run High School":         "https://greenrun.vbschools.com",
 };
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -808,14 +828,14 @@ function buildCoachCards() {
       <div class="coach-meta">
         <span class="coach-pill">${c.record}</span>
         <span class="coach-pill">${controlTag(c.control)}</span>
-        <span class="tier ${tierClass(tier)} coach-pill" style="border:none">${tier}</span>
+        <span class="tier ${tierClass(tier)}" style="padding:4px 10px;font-size:0.75rem;border-radius:16px">${tier}</span>
         ${scoreBar(c.score)}
       </div>
       <div class="coach-meta" style="margin-top:6px;gap:6px;">
-        <span class="tier ${c.tenure >= 10 ? "tier-platinum" : c.tenure >= 5 ? "tier-gold" : c.tenure >= 1 ? "tier-silver" : "tier-bronze"} coach-pill" style="border:none" title="Years as head coach at this school">&#x23F1; ${c.tenure} yr${c.tenure !== 1 ? "s" : ""} tenure</span>
-        <span class="tier ${c.d1 >= 10 ? "tier-platinum" : c.d1 >= 5 ? "tier-gold" : c.d1 >= 1 ? "tier-silver" : "tier-bronze"} coach-pill" style="border:none" title="Current D1 Power 4 players from this school">&#x1F3C8; ${c.d1} D1 players</span>
-        <span class="tier ${c.ivy >= 2 ? "tier-platinum" : c.ivy >= 1 ? "tier-gold" : "tier-bronze"} coach-pill" style="border:none" title="Ivy League college players from this school">&#x1F4DA; ${c.ivy} Ivy</span>
-        <span class="tier ${c.d3 >= 2 ? "tier-platinum" : c.d3 >= 1 ? "tier-gold" : "tier-bronze"} coach-pill" style="border:none" title="High Academic D3 players from this school">&#x2B50; ${c.d3} Hi-Acad D3</span>
+        <span class="tier ${c.tenure >= 10 ? "tier-platinum" : c.tenure >= 5 ? "tier-gold" : c.tenure >= 1 ? "tier-silver" : "tier-bronze"}" style="padding:4px 10px;font-size:0.75rem;border-radius:16px" title="Years as head coach at this school">&#x23F1; ${c.tenure} yr${c.tenure !== 1 ? "s" : ""} tenure</span>
+        <span class="tier ${c.d1 >= 10 ? "tier-platinum" : c.d1 >= 5 ? "tier-gold" : c.d1 >= 1 ? "tier-silver" : "tier-bronze"}" style="padding:4px 10px;font-size:0.75rem;border-radius:16px" title="Current D1 Power 4 players from this school">&#x1F3C8; ${c.d1} D1 players</span>
+        <span class="tier ${c.ivy >= 2 ? "tier-platinum" : c.ivy >= 1 ? "tier-gold" : "tier-bronze"}" style="padding:4px 10px;font-size:0.75rem;border-radius:16px" title="Ivy League college players from this school">&#x1F4DA; ${c.ivy} Ivy</span>
+        <span class="tier ${c.d3 >= 2 ? "tier-platinum" : c.d3 >= 1 ? "tier-gold" : "tier-bronze"}" style="padding:4px 10px;font-size:0.75rem;border-radius:16px" title="High Academic D3 players from this school">&#x2B50; ${c.d3} Hi-Acad D3</span>
       </div>
       <div class="coach-contact">
         <strong>How to Reach:</strong> ${c.contact}

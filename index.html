@@ -87,9 +87,13 @@
     box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   }
   .header-top { display: flex; align-items: center; gap: 14px; }
-  .header-logo {
-    font-size: 0.85rem; font-weight: 800;
-    letter-spacing: 0.12em; color: var(--accent); white-space: nowrap;
+  .header-logo-img {
+    height: 36px;
+    width: 36px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+    display: block;
   }
   .header-divider { width: 1px; height: 28px; background: var(--border2); flex-shrink: 0; }
   .header-title { font-size: 1.05rem; font-weight: 700; color: var(--text); line-height: 1.2; }
@@ -387,7 +391,7 @@
 <!-- ── Password Gate ── -->
 <div id="gate">
   <div class="gate-card">
-    <div class="gate-logo">GRITTY OS</div>
+    <img src="grittyos-logo.png" alt="GrittyOS" style="height:48px;width:48px;border-radius:10px;object-fit:cover;margin:0 auto 12px;display:block;">
     <div class="gate-title">Ian Turner Dashboard</div>
     <div class="gate-sub">This report was prepared privately for the Walker family. Please enter your access code to continue.</div>
     <input type="password" id="gate-input" class="gate-input" placeholder="Enter access code" autocomplete="off">
@@ -402,7 +406,7 @@
   <!-- Header -->
   <div class="header">
     <div class="header-top">
-      <div class="header-logo">GRITTY OS</div>
+      <img src="grittyos-logo.png" alt="GrittyOS" class="header-logo-img">
       <div class="header-divider"></div>
       <div>
         <div class="header-title">High School Selection Report</div>

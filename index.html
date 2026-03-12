@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>GrittyOS | Ian Walker — High School Selection</title>
+<title>GrittyOS | Ian Turner — High School Selection</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -161,6 +161,12 @@
     background: #6ed430;
     flex-shrink: 0;
   }
+  .profile-pill-x {
+    color: #ccc;
+    text-decoration: none;
+    border-color: #444;
+  }
+  .profile-pill-x:hover { border-color: #aaa; color: #fff; text-decoration: none; }
 
   /* ── Tabs ── */
   .tabs-wrapper {
@@ -754,7 +760,7 @@
 <div id="gate">
   <div class="gate-card">
     <div class="gate-logo">GRITTY OS</div>
-    <div class="gate-title">Ian Walker Dashboard</div>
+    <div class="gate-title">Ian Turner Dashboard</div>
     <div class="gate-sub">This report was prepared privately for the Walker family. Please enter your access code to continue.</div>
     <input type="password" id="gate-input" class="gate-input" placeholder="Enter access code" autocomplete="off">
     <button class="gate-btn" onclick="checkPassword()">View Dashboard</button>
@@ -779,11 +785,15 @@
 
   <!-- Profile Card -->
   <div class="profile-card">
-    <div class="profile-name">Ian Walker &mdash; 8th Grade</div>
+    <div class="profile-name">Ian Turner &mdash; 8th Grade</div>
     <div class="profile-pill"><span class="dot"></span>Football &amp; Basketball</div>
     <div class="profile-pill"><span class="dot"></span>GPA: 3.5+</div>
     <div class="profile-pill"><span class="dot"></span>Goldston, NC</div>
     <div class="profile-pill"><span class="dot"></span>Trending D1 Talent</div>
+    <a href="https://x.com/ianturner20301" target="_blank" rel="noopener" class="profile-pill profile-pill-x">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L2.25 2.25h6.928l4.27 5.648 4.796-5.648zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      @ianturner20301
+    </a>
   </div>
 
   <!-- Tabs -->
@@ -804,7 +814,7 @@
     <div class="section-label">About This Report</div>
     <div class="section-title">What We Built for Ian &amp; Ms. Walker</div>
     <div class="section-desc">
-      GrittyOS looked at all the top high schools in both Greensboro, NC and the Tidewater region of Virginia. We graded each school on 8 key things that matter most for Ian's future — both on the field and in the classroom. Every school got a score out of 100. The higher the score, the better the fit.
+      GrittyOS looked at all the top high schools in both Greensboro, NC and the Tidewater region of Virginia. We graded each school on 8 key things that matter most for Ian Turner's future — both on the field and in the classroom. Every school got a score out of 100. The higher the score, the better the fit.
     </div>
 
     <div class="analyst-note">
@@ -813,7 +823,7 @@
 
     <div class="info-grid">
       <div class="card">
-        <div class="card-title">Ian's Situation</div>
+        <div class="card-title">Ian Turner's Situation</div>
         <div class="card-body">
           <div class="info-row"><div class="info-label">Home Base</div><div class="info-value">Goldston, NC (Chatham County) — small rural town</div></div>
           <div class="info-row"><div class="info-label">Option 1</div><div class="info-value"><strong>Greensboro, NC</strong> — Ian would live with his older brother (age 25, local law enforcement). Ms. Walker can visit on weekends.</div></div>
@@ -828,7 +838,7 @@
         <div class="card-body">
           <div class="info-row"><div class="info-label">Football Record</div><div class="info-value">How well did the team do in the 2025 season? State champions score highest.</div></div>
           <div class="info-row"><div class="info-label">College Players</div><div class="info-value">How many players from this school are on active Division 1 rosters right now?</div></div>
-          <div class="info-row"><div class="info-label">Graduation Rate</div><div class="info-value">What percentage of students graduate? Higher is better for Ian's future.</div></div>
+          <div class="info-row"><div class="info-label">Graduation Rate</div><div class="info-value">What percentage of students graduate? Higher is better for Ian Turner's future.</div></div>
           <div class="info-row"><div class="info-label">Ivy League</div><div class="info-value">Any graduates playing football at Harvard, Yale, Princeton, or similar?</div></div>
           <div class="info-row"><div class="info-label">Academic Colleges</div><div class="info-value">Players at highly selective academic schools (Amherst, Williams, etc.).</div></div>
           <div class="info-row"><div class="info-label">Coach Stability</div><div class="info-value">How long has the current head coach been at the school? Longer = more stability.</div></div>

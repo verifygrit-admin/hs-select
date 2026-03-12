@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>GrittyOS | Ian Walker — High School Selection</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   /* ── Reset & Base ── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -502,6 +504,248 @@
     .tab-btn { padding: 13px 12px; font-size: 0.8rem; }
     .info-label { width: 110px; }
   }
+
+  /* ── Map Panel ── */
+  #panel-map { padding: 0; }
+  #panel-map.active { display: flex; flex-direction: column; }
+  .map-wrap {
+    position: relative;
+    flex: 1;
+    min-height: calc(100vh - 200px);
+  }
+  #map { width: 100%; height: 100%; }
+
+  /* ── Map Legend ── */
+  .map-legend {
+    position: absolute;
+    bottom: 28px; left: 12px;
+    z-index: 1000;
+    background: rgba(17,17,17,0.92);
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.75rem;
+    color: #aaa;
+    pointer-events: none;
+  }
+  .map-legend-row { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+  .map-legend-row:last-child { margin-bottom: 0; }
+  .map-legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 2px solid rgba(255,255,255,0.2);
+  }
+
+  /* ── School Detail Panel (desktop right sidebar / mobile bottom sheet) ── */
+  .school-panel {
+    position: absolute;
+    z-index: 1100;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    overflow-y: auto;
+    transition: transform 0.25s ease;
+  }
+  /* Desktop: right sidebar */
+  @media (min-width: 640px) {
+    .school-panel {
+      top: 0; right: 0;
+      width: 320px; height: 100%;
+      border-radius: 0;
+      border-top: none; border-bottom: none; border-right: none;
+      transform: translateX(100%);
+    }
+    .school-panel.open { transform: translateX(0); }
+  }
+  /* Mobile: bottom sheet */
+  @media (max-width: 639px) {
+    .school-panel {
+      bottom: 0; left: 0; right: 0;
+      max-height: 65vh;
+      border-radius: 14px 14px 0 0;
+      border-left: none; border-right: none; border-bottom: none;
+      transform: translateY(100%);
+    }
+    .school-panel.open { transform: translateY(0); }
+  }
+  .school-panel-inner { padding: 16px; }
+  .sp-close {
+    position: absolute; top: 10px; right: 12px;
+    background: none; border: none;
+    color: #666; font-size: 1.3rem;
+    cursor: pointer; line-height: 1;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .sp-close:hover { color: #ccc; }
+  .sp-tier-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .sp-name { font-size: 1.05rem; font-weight: 800; color: #fff; margin-bottom: 2px; }
+  .sp-city { font-size: 0.82rem; color: #888; margin-bottom: 14px; }
+  .sp-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .sp-stat {
+    background: #222;
+    border-radius: 7px;
+    padding: 9px 10px;
+  }
+  .sp-stat-label { font-size: 0.68rem; font-weight: 700; color: #6ed430; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 3px; }
+  .sp-stat-val { font-size: 0.9rem; font-weight: 700; color: #fff; }
+  .sp-actions { display: flex; gap: 8px; }
+  .sp-btn {
+    flex: 1;
+    padding: 11px 8px;
+    border-radius: 8px;
+    border: none;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .sp-btn-compare {
+    background: #2e6b18;
+    color: #c8f5a0;
+  }
+  .sp-btn-compare:hover { background: #3a8520; }
+  .sp-btn-compare.selected { background: #4a1010; color: #ffaaaa; }
+  .sp-btn-maxpreps {
+    background: #222;
+    color: #aaa;
+    border: 1px solid #333;
+  }
+  .sp-btn-maxpreps:hover { color: #fff; border-color: #555; }
+
+  /* ── Compare Bar (bottom of map) ── */
+  .compare-bar {
+    background: #161e12;
+    border-top: 2px solid #2e6b18;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 52px;
+    flex-shrink: 0;
+  }
+  .compare-bar-label {
+    font-size: 0.78rem;
+    color: #6ed430;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+  .compare-slots {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+  }
+  .compare-slot {
+    flex: 1;
+    background: #1e2a18;
+    border: 1px dashed #2e6b18;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.78rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    min-width: 0;
+    overflow: hidden;
+  }
+  .compare-slot.filled { border-style: solid; color: #c8f5a0; }
+  .compare-slot-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .compare-slot-x {
+    background: none; border: none;
+    color: #6ed430; font-size: 1rem;
+    cursor: pointer; flex-shrink: 0;
+    line-height: 1;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .compare-go-btn {
+    background: #6ed430;
+    color: #111;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 0.82rem;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+    letter-spacing: 0.03em;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .compare-go-btn:disabled { background: #2e6b18; color: #5a8a40; cursor: default; }
+
+  /* ── Compare Modal ── */
+  .compare-modal {
+    position: fixed; inset: 0; z-index: 2000;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 16px;
+    overflow-y: auto;
+  }
+  .compare-modal.open { display: flex; }
+  .compare-modal-card {
+    background: #1a1a1a;
+    border: 1px solid #2e6b18;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 800px;
+    margin: auto;
+    overflow: hidden;
+  }
+  .compare-modal-header {
+    background: #161e12;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #2a2a2a;
+  }
+  .compare-modal-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #6ed430;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+  .compare-modal-close {
+    background: none; border: none;
+    color: #666; font-size: 1.4rem;
+    cursor: pointer; line-height: 1;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .compare-modal-close:hover { color: #ccc; }
+  .compare-table-wrap { overflow-x: auto; }
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    min-width: 400px;
+  }
+  .compare-table th {
+    background: #1e1e1e;
+    padding: 14px 16px;
+    font-weight: 800;
+    color: #fff;
+    text-align: center;
+    border-bottom: 1px solid #2a2a2a;
+  }
+  .compare-table th:first-child { text-align: left; color: #6ed430; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .compare-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid #1e1e1e;
+    text-align: center;
+    color: #ccc;
+    vertical-align: middle;
+  }
+  .compare-table td:first-child { text-align: left; color: #888; font-size: 0.82rem; }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-winner { color: #6ed430; font-weight: 700; }
+  .compare-loser  { color: #666; }
 </style>
 </head>
 <body>
@@ -550,6 +794,7 @@
       <button class="tab-btn" onclick="switchTab('tidewater', this)" role="tab">Tidewater VA Schools</button>
       <button class="tab-btn" onclick="switchTab('top15', this)" role="tab">Top 15 Combined</button>
       <button class="tab-btn" onclick="switchTab('coaches', this)" role="tab">Coach Directory</button>
+      <button class="tab-btn" onclick="switchTab('map', this)" role="tab">Map View</button>
     </div>
   </div>
 
@@ -653,6 +898,51 @@
     <div class="coach-grid" id="coach-grid"></div>
   </div><!-- /.panel-inner -->
   </div><!-- /#panel-coaches -->
+
+  <!-- ── MAP TAB ── -->
+  <div id="panel-map" class="panel">
+    <div class="map-wrap">
+      <div id="map"></div>
+
+      <!-- Tier legend -->
+      <div class="map-legend">
+        <div class="map-legend-row"><div class="map-legend-dot" style="background:#a78bfa"></div>Platinum</div>
+        <div class="map-legend-row"><div class="map-legend-dot" style="background:#f5c842"></div>Gold</div>
+        <div class="map-legend-row"><div class="map-legend-dot" style="background:#6ed430"></div>Silver</div>
+        <div class="map-legend-row"><div class="map-legend-dot" style="background:#cd9c60"></div>Bronze</div>
+        <div class="map-legend-row"><div class="map-legend-dot" style="background:#4fc3f7"></div>Home Base</div>
+      </div>
+
+      <!-- School detail panel -->
+      <div class="school-panel" id="school-panel">
+        <button class="sp-close" onclick="closeSchoolPanel()" aria-label="Close">&times;</button>
+        <div class="school-panel-inner" id="school-panel-inner"></div>
+      </div>
+    </div>
+
+    <!-- Compare bar -->
+    <div class="compare-bar">
+      <div class="compare-bar-label">COMPARE</div>
+      <div class="compare-slots">
+        <div class="compare-slot" id="cslot-0"><span class="compare-slot-name" id="cslot-0-name">Pick a school</span></div>
+        <div class="compare-slot" id="cslot-1"><span class="compare-slot-name" id="cslot-1-name">Pick a school</span></div>
+      </div>
+      <button class="compare-go-btn" id="compare-go-btn" onclick="openCompareModal()" disabled>Compare</button>
+    </div>
+  </div><!-- /#panel-map -->
+
+  <!-- ── Compare Modal ── -->
+  <div class="compare-modal" id="compare-modal">
+    <div class="compare-modal-card">
+      <div class="compare-modal-header">
+        <span class="compare-modal-title">School Comparison</span>
+        <button class="compare-modal-close" onclick="closeCompareModal()">&times;</button>
+      </div>
+      <div class="compare-table-wrap">
+        <table class="compare-table" id="compare-table"></table>
+      </div>
+    </div>
+  </div>
 
   <div class="footer">
     GrittyOS &copy; 2026 &mdash; Prepared privately for the Walker Family &mdash; Do not distribute
@@ -858,6 +1148,289 @@ function renderAll() {
   buildSchoolTable(TIDEWATER,  "table-tidewater");
   buildSchoolTable(TOP15,      "table-top15", true);
   buildCoachCards();
+}
+
+// ── Map ────────────────────────────────────────────────────────────────────────
+const COORDS = {
+  "Grimsley High School":          { lat: 36.0874, lng: -79.8247 },
+  "Cardinal Gibbons HS":           { lat: 35.8134, lng: -78.7204 },
+  "Dudley High School":            { lat: 36.0576, lng: -79.7892 },
+  "Page High School":              { lat: 36.1012, lng: -79.7762 },
+  "Bishop McGuinness Catholic HS": { lat: 36.1224, lng: -80.0957 },
+  "East Forsyth High School":      { lat: 36.1437, lng: -80.2677 },
+  "Northern Guilford High School": { lat: 36.2039, lng: -79.8024 },
+  "Southeast Guilford HS":         { lat: 35.9867, lng: -79.7765 },
+  "Oscar Smith High School":       { lat: 36.7339, lng: -76.2305 },
+  "Maury High School":             { lat: 36.8905, lng: -76.2960 },
+  "Lafayette High School":         { lat: 37.3066, lng: -76.7539 },
+  "Warwick High School":           { lat: 37.0481, lng: -76.4889 },
+  "Phoebus High School":           { lat: 37.0329, lng: -76.3217 },
+  "King's Fork High School":       { lat: 36.7332, lng: -76.5798 },
+  "Green Run High School":         { lat: 36.8268, lng: -76.0847 },
+  "Woodside High School":          { lat: 37.1086, lng: -76.5052 },
+};
+const GOLDSTON = { lat: 35.5979, lng: -79.3553 };
+
+const TIER_COLORS = {
+  PLATINUM: "#a78bfa",
+  GOLD:     "#f5c842",
+  SILVER:   "#6ed430",
+  BRONZE:   "#cd9c60",
+};
+
+// All schools combined for lookup
+const ALL_SCHOOLS = [...GREENSBORO, ...TIDEWATER].map(s => ({
+  ...s,
+  tier: tierLabel(s.score),
+  region: GREENSBORO.includes(s) ? "Greensboro" : "Tidewater VA",
+  maxpreps: (() => {
+    const mp = {
+      "Grimsley High School":          "https://www.maxpreps.com/nc/greensboro/grimsley-whirlies/football/",
+      "Dudley High School":            "https://www.maxpreps.com/nc/greensboro/dudley-panthers/football/",
+      "Page High School":              "https://www.maxpreps.com/nc/greensboro/page-pirates/football/",
+      "Cardinal Gibbons HS":           "https://www.maxpreps.com/nc/raleigh/cardinal-gibbons-crusaders/football/",
+      "Oscar Smith High School":       "https://www.maxpreps.com/va/chesapeake/oscar-smith-tigers/football/",
+      "Maury High School":             "https://www.maxpreps.com/va/norfolk/maury-commodores/football/",
+      "Phoebus High School":           "https://www.maxpreps.com/va/hampton/phoebus-phantoms/football/",
+      "Lafayette High School":         "https://www.maxpreps.com/va/williamsburg/lafayette-rams/football/",
+      "Warwick High School":           "https://www.maxpreps.com/va/newport-news/warwick-raiders/football/",
+    };
+    return mp[s.name] || null;
+  })(),
+}));
+
+let leafletMap = null;
+let mapInited  = false;
+
+// Compare state
+let compareList = [null, null];
+
+function markerIcon(color) {
+  return L.divIcon({
+    className: "",
+    html: `<div style="
+      width:14px;height:14px;border-radius:50%;
+      background:${color};
+      border:2px solid rgba(255,255,255,0.35);
+      box-shadow:0 0 6px ${color}88;
+    "></div>`,
+    iconSize: [14, 14],
+    iconAnchor: [7, 7],
+  });
+}
+
+function homeIcon() {
+  return L.divIcon({
+    className: "",
+    html: `<div style="
+      width:16px;height:16px;border-radius:3px;
+      background:#4fc3f7;
+      border:2px solid rgba(255,255,255,0.5);
+      box-shadow:0 0 8px #4fc3f788;
+      transform:rotate(45deg);
+    "></div>`,
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
+  });
+}
+
+function initMap() {
+  if (mapInited) return;
+  mapInited = true;
+
+  leafletMap = L.map("map", {
+    center: [36.8, -78.2],
+    zoom: 7,
+    zoomControl: true,
+    tap: false,
+  });
+
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+    attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
+    maxZoom: 18,
+  }).addTo(leafletMap);
+
+  // Home base pin
+  L.marker([GOLDSTON.lat, GOLDSTON.lng], { icon: homeIcon() })
+    .addTo(leafletMap)
+    .bindTooltip("🏠 Goldston, NC (Home Base)", { permanent: false, direction: "top" });
+
+  // School markers
+  ALL_SCHOOLS.forEach(school => {
+    const c = COORDS[school.name];
+    if (!c) return;
+    const color = TIER_COLORS[school.tier] || "#888";
+    L.marker([c.lat, c.lng], { icon: markerIcon(color) })
+      .addTo(leafletMap)
+      .on("click", () => showSchoolPanel(school));
+  });
+}
+
+function showSchoolPanel(school) {
+  const inCompare = compareList.includes(school.name);
+  const tier = school.tier;
+  const color = TIER_COLORS[tier];
+
+  document.getElementById("school-panel-inner").innerHTML = `
+    <div class="sp-tier-row">
+      <span class="tier ${tierClass(tier)}">${tier}</span>
+      <span class="tag-${school.region === "Greensboro" ? "gsboro" : "twater"}">${school.region}</span>
+    </div>
+    <div class="sp-name">${school.name}</div>
+    <div class="sp-city">${school.city} &bull; ${controlTag(school.control)}</div>
+    ${scoreBar(school.score)}
+    <div style="margin:14px 0 0">
+    <div class="sp-stats">
+      <div class="sp-stat"><div class="sp-stat-label">2025 Record</div><div class="sp-stat-val">${school.record}</div></div>
+      <div class="sp-stat"><div class="sp-stat-label">College Players</div><div class="sp-stat-val">${school.d1} D1</div></div>
+      <div class="sp-stat"><div class="sp-stat-label">Grad Rate</div><div class="sp-stat-val">${school.grad}%</div></div>
+      <div class="sp-stat"><div class="sp-stat-label">From Goldston</div><div class="sp-stat-val">${school.dist} mi</div></div>
+      <div class="sp-stat"><div class="sp-stat-label">Head Coach</div><div class="sp-stat-val" style="font-size:0.8rem">${school.coach}</div></div>
+      <div class="sp-stat"><div class="sp-stat-label">Tuition</div><div class="sp-stat-val" style="font-size:0.8rem">${school.tuition}</div></div>
+    </div>
+    <div class="sp-actions">
+      <button class="sp-btn sp-btn-compare ${inCompare ? "selected" : ""}"
+        id="sp-compare-btn"
+        onclick="toggleCompare('${school.name.replace(/'/g,"\\'")}')">
+        ${inCompare ? "Remove from Compare" : "+ Add to Compare"}
+      </button>
+      ${school.maxpreps ? `<a href="${school.maxpreps}" target="_blank" class="sp-btn sp-btn-maxpreps" style="display:flex;align-items:center;justify-content:center;text-decoration:none">MaxPreps</a>` : ""}
+    </div>
+    </div>
+  `;
+
+  document.getElementById("school-panel").classList.add("open");
+}
+
+function closeSchoolPanel() {
+  document.getElementById("school-panel").classList.remove("open");
+}
+
+// ── Compare logic ──────────────────────────────────────────────────────────────
+function toggleCompare(schoolName) {
+  if (compareList.includes(schoolName)) {
+    removeFromCompare(schoolName);
+  } else {
+    addToCompare(schoolName);
+  }
+  // Refresh panel button state
+  const school = ALL_SCHOOLS.find(s => s.name === schoolName);
+  if (school) showSchoolPanel(school);
+}
+
+function addToCompare(schoolName) {
+  const slot = compareList.indexOf(null);
+  if (slot === -1) return; // already 2 selected
+  compareList[slot] = schoolName;
+  updateCompareBar();
+}
+
+function removeFromCompare(schoolName) {
+  const idx = compareList.indexOf(schoolName);
+  if (idx === -1) return;
+  compareList[idx] = null;
+  // Pack nulls to end
+  compareList = compareList.filter(Boolean);
+  while (compareList.length < 2) compareList.push(null);
+  updateCompareBar();
+}
+
+function updateCompareBar() {
+  [0, 1].forEach(i => {
+    const name = compareList[i];
+    const slot = document.getElementById(`cslot-${i}`);
+    const nameEl = document.getElementById(`cslot-${i}-name`);
+    if (name) {
+      const short = name.length > 22 ? name.slice(0, 20) + "…" : name;
+      nameEl.textContent = short;
+      slot.classList.add("filled");
+      if (!slot.querySelector(".compare-slot-x")) {
+        const x = document.createElement("button");
+        x.className = "compare-slot-x";
+        x.textContent = "×";
+        x.onclick = () => removeFromCompare(name);
+        slot.appendChild(x);
+      } else {
+        slot.querySelector(".compare-slot-x").onclick = () => removeFromCompare(name);
+      }
+    } else {
+      nameEl.textContent = "Pick a school";
+      slot.classList.remove("filled");
+      const x = slot.querySelector(".compare-slot-x");
+      if (x) x.remove();
+    }
+  });
+  const ready = compareList[0] && compareList[1];
+  document.getElementById("compare-go-btn").disabled = !ready;
+}
+
+// ── Compare Modal ──────────────────────────────────────────────────────────────
+const COMPARE_ROWS = [
+  { label: "GrittyOS Score",     key: "score",   fmt: v => v + " / 100",  better: "higher" },
+  { label: "Tier",               key: "tier",    fmt: v => v,             better: null     },
+  { label: "2025 Football Record",key:"record",  fmt: v => v,             better: null     },
+  { label: "D1 College Players", key: "d1",      fmt: v => v + " players",better: "higher" },
+  { label: "Graduation Rate",    key: "grad",    fmt: v => v + "%",       better: "higher" },
+  { label: "Ivy League Players", key: "ivy",     fmt: v => v,             better: "higher" },
+  { label: "Academic D3 Players",key: "d3",      fmt: v => v,             better: "higher" },
+  { label: "Head Coach",         key: "coach",   fmt: v => v,             better: null     },
+  { label: "Coach Tenure",       key: "tenure",  fmt: v => v + " yrs",   better: "higher" },
+  { label: "Distance from Goldston",key:"dist",  fmt: v => v + " mi",    better: "lower"  },
+  { label: "Annual Tuition",     key: "tuition", fmt: v => v,             better: null     },
+  { label: "Region",             key: "region",  fmt: v => v,             better: null     },
+];
+
+function openCompareModal() {
+  const [nameA, nameB] = compareList;
+  const a = ALL_SCHOOLS.find(s => s.name === nameA);
+  const b = ALL_SCHOOLS.find(s => s.name === nameB);
+  if (!a || !b) return;
+
+  const rows = COMPARE_ROWS.map(row => {
+    const av = a[row.key], bv = b[row.key];
+    let aClass = "", bClass = "";
+    if (row.better === "higher") {
+      if (av > bv)       { aClass = "compare-winner"; bClass = "compare-loser"; }
+      else if (bv > av)  { bClass = "compare-winner"; aClass = "compare-loser"; }
+    } else if (row.better === "lower") {
+      if (av < bv)       { aClass = "compare-winner"; bClass = "compare-loser"; }
+      else if (bv < av)  { bClass = "compare-winner"; aClass = "compare-loser"; }
+    }
+    const aScore = row.key === "score" ? scoreBar(av) : `<span class="${aClass}">${row.fmt(av)}</span>`;
+    const bScore = row.key === "score" ? scoreBar(bv) : `<span class="${bClass}">${row.fmt(bv)}</span>`;
+    return `<tr>
+      <td>${row.label}</td>
+      <td>${aScore}</td>
+      <td>${bScore}</td>
+    </tr>`;
+  }).join("");
+
+  document.getElementById("compare-table").innerHTML = `
+    <thead><tr>
+      <th>Category</th>
+      <th>${a.name}</th>
+      <th>${b.name}</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  `;
+
+  document.getElementById("compare-modal").classList.add("open");
+}
+
+function closeCompareModal() {
+  document.getElementById("compare-modal").classList.remove("open");
+}
+
+// ── Override switchTab to lazy-init map ────────────────────────────────────────
+const _origSwitchTab = switchTab;
+function switchTab(id, btn) {
+  _origSwitchTab(id, btn);
+  if (id === "map") {
+    setTimeout(() => {
+      initMap();
+      if (leafletMap) leafletMap.invalidateSize();
+    }, 50);
+  }
 }
 </script>
 </body>

@@ -331,21 +331,20 @@
 
   /* ── Compare Bar ── */
   .compare-bar {
-    background: var(--surface); border-top: 2px solid var(--accent);
+    background: var(--surface); border-bottom: 2px solid var(--accent);
     padding: 10px 16px; display: flex; align-items: center; gap: 10px;
-    min-height: 52px; flex-shrink: 0; box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+    min-height: 52px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   }
   .compare-bar-label { font-size: 0.78rem; color: var(--accent-t); font-weight: 700; letter-spacing: 0.05em; white-space: nowrap; }
   .compare-slots { display: flex; gap: 8px; flex: 1; min-width: 0; }
-  .compare-slot {
-    flex: 1; background: #f0fdf4; border: 1px dashed #86efac;
-    border-radius: 6px; padding: 6px 10px; font-size: 0.78rem; color: var(--faint);
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 6px; min-width: 0; overflow: hidden;
+  .compare-slot { flex: 1; display: flex; align-items: center; gap: 4px; min-width: 0; }
+  .compare-select {
+    flex: 1; min-width: 0; background: #f0fdf4; border: 1px dashed #86efac;
+    border-radius: 6px; padding: 6px 8px; font-size: 0.78rem; color: var(--faint);
+    cursor: pointer; -webkit-tap-highlight-color: transparent; font-family: inherit;
   }
-  .compare-slot.filled { border-style: solid; border-color: var(--accent); color: var(--accent-t); background: var(--accent-l); }
-  .compare-slot-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .compare-slot-x { background: none; border: none; color: var(--accent); font-size: 1rem; cursor: pointer; flex-shrink: 0; line-height: 1; -webkit-tap-highlight-color: transparent; }
+  .compare-select.filled { border-style: solid; border-color: var(--accent); color: var(--accent-t); background: var(--accent-l); }
+  .compare-slot-x { background: none; border: none; color: var(--accent); font-size: 1.1rem; cursor: pointer; flex-shrink: 0; line-height: 1; padding: 0 4px; -webkit-tap-highlight-color: transparent; }
   .compare-go-btn {
     background: var(--accent); color: #fff; border: none; border-radius: 8px;
     padding: 10px 16px; font-size: 0.82rem; font-weight: 800; cursor: pointer;
@@ -450,7 +449,7 @@
     </div>
 
     <div class="analyst-note">
-      <strong>GrittyOS Analyst Note:</strong> Grimsley High School (Greensboro) and Oscar Smith High School (Chesapeake, VA) are the two best options in the country when you combine championship football, college pipeline, strong academics, and $0 tuition. Ian should prioritize the Greensboro option first — Grimsley, Dudley, and Cardinal Gibbons are all within an hour of Goldston. Tidewater is a strong backup plan with elite programs of its own.
+      <strong>GrittyOS Analyst Note:</strong> <a href="https://grimsley.gcsnc.com" target="_blank" rel="noopener">Grimsley High School</a> (Greensboro) and <a href="https://oscarsmithfootball.com" target="_blank" rel="noopener">Oscar Smith High School</a> (Chesapeake, VA) are the two best options in the country when you combine championship football, college pipeline, strong academics, and $0 tuition. Ian should prioritize the Greensboro option first — Grimsley, Dudley, and <a href="https://www.cghsnc.org" target="_blank" rel="noopener">Cardinal Gibbons</a> are all within an hour of Goldston. Tidewater is a strong backup plan with elite programs of its own.
     </div>
 
     <div class="info-grid">
@@ -532,8 +531,8 @@
 
     <div class="analyst-note">
       <strong>How to Reach Out:</strong>
-      1. Start with Grimsley (Greensboro) and Oscar Smith (Tidewater) — both are elite programs and actively looking for talent like Ian.<br>
-      2. For Cardinal Gibbons (private school), contact both admissions AND the athletic director at the same time — they have over $1.8 million in financial aid available every year.<br>
+      1. Start with <a href="https://grimsley.gcsnc.com" target="_blank" rel="noopener">Grimsley</a> (Greensboro) and <a href="https://oscarsmithfootball.com" target="_blank" rel="noopener">Oscar Smith</a> (Tidewater) — both are elite programs and actively looking for talent like Ian.<br>
+      2. For <a href="https://www.cghsnc.org" target="_blank" rel="noopener">Cardinal Gibbons</a> (private school), contact both admissions AND the athletic director at the same time — they have over $1.8 million in financial aid available every year.<br>
       3. All recruiting questionnaires should be filled out before the end of 8th grade spring semester.
     </div>
 
@@ -557,6 +556,22 @@
       <button class="map-chip"        data-filter="tier" data-val="SILVER"   onclick="setMapFilter('tier','SILVER',this)">Silver</button>
       <button class="map-chip"        data-filter="tier" data-val="BRONZE"   onclick="setMapFilter('tier','BRONZE',this)">Bronze</button>
     </div>
+    <!-- Compare bar — sits between filters and map -->
+    <div class="compare-bar">
+      <div class="compare-bar-label">COMPARE</div>
+      <div class="compare-slots">
+        <div class="compare-slot" id="cslot-0">
+          <select class="compare-select" id="cselect-0" onchange="selectFromDropdown(0)"><option value="">Pick a school…</option></select>
+          <button class="compare-slot-x" id="cslot-0-x" style="display:none" onclick="clearCompareSlot(0)">×</button>
+        </div>
+        <div class="compare-slot" id="cslot-1">
+          <select class="compare-select" id="cselect-1" onchange="selectFromDropdown(1)"><option value="">Pick a school…</option></select>
+          <button class="compare-slot-x" id="cslot-1-x" style="display:none" onclick="clearCompareSlot(1)">×</button>
+        </div>
+      </div>
+      <button class="compare-go-btn" id="compare-go-btn" onclick="openCompareModal()" disabled>Compare</button>
+    </div>
+
     <div class="map-wrap">
       <div id="map"></div>
 
@@ -564,7 +579,7 @@
       <div class="map-legend">
         <div class="map-legend-row"><div class="map-legend-dot" style="background:#a78bfa"></div>Platinum</div>
         <div class="map-legend-row"><div class="map-legend-dot" style="background:#f5c842"></div>Gold</div>
-        <div class="map-legend-row"><div class="map-legend-dot" style="background:#6ed430"></div>Silver</div>
+        <div class="map-legend-row"><div class="map-legend-dot" style="background:#94a3b8"></div>Silver</div>
         <div class="map-legend-row"><div class="map-legend-dot" style="background:#cd9c60"></div>Bronze</div>
         <div class="map-legend-row"><div class="map-legend-dot" style="background:#4fc3f7"></div>Home Base</div>
       </div>
@@ -575,16 +590,6 @@
         <div class="school-panel-inner" id="school-panel-inner"></div>
       </div>
     </div><!-- /.map-wrap -->
-
-    <!-- Compare bar -->
-    <div class="compare-bar">
-      <div class="compare-bar-label">COMPARE</div>
-      <div class="compare-slots">
-        <div class="compare-slot" id="cslot-0"><span class="compare-slot-name" id="cslot-0-name">Pick a school</span></div>
-        <div class="compare-slot" id="cslot-1"><span class="compare-slot-name" id="cslot-1-name">Pick a school</span></div>
-      </div>
-      <button class="compare-go-btn" id="compare-go-btn" onclick="openCompareModal()" disabled>Compare</button>
-    </div>
   </div><!-- /#panel-map -->
 
   <!-- ── Compare Modal ── -->
@@ -709,6 +714,16 @@ const COACHES = [
   { rank:10, school:"Warwick High School",           city:"Newport News, VA",  control:"Public",  record:"10-3 (5A 3rd Round)",    score:44.5, tenure:3,  d1:4,  ivy:0, d3:1, name:"Cam Hairston",       contact:"School website or MaxPreps coaching page",               website:""                         },
 ];
 
+// ── School Website URLs ─────────────────────────────────────────────────────────
+const SCHOOL_URLS = {
+  "Grimsley High School":          "https://grimsley.gcsnc.com",
+  "Cardinal Gibbons HS":           "https://www.cghsnc.org",
+  "Oscar Smith High School":       "https://oscarsmithfootball.com",
+  "Maury High School":             "https://www.mauryhighschool.com",
+  "Bishop McGuinness Catholic HS": "https://www.bmhs.us",
+  "Phoebus High School":           "https://phs.hampton.k12.va.us",
+};
+
 // ── Helpers ────────────────────────────────────────────────────────────────────
 function tierClass(tier) {
   return { PLATINUM:"tier-platinum", GOLD:"tier-gold", SILVER:"tier-silver", BRONZE:"tier-bronze" }[tier] || "tier-bronze";
@@ -744,7 +759,7 @@ function buildSchoolTable(data, containerId, showRegion=false) {
 
   const cols = [
     { key:"rank",    label:"#",           render: r => `<strong>${r.rank}</strong>` },
-    { key:"name",    label:"School",       render: r => `<strong>${r.name}</strong><div class="td-sub">${r.city}</div>` },
+    { key:"name",    label:"School",       render: r => `<strong>${SCHOOL_URLS[r.name] ? `<a href="${SCHOOL_URLS[r.name]}" target="_blank" rel="noopener">${r.name}</a>` : r.name}</strong><div class="td-sub">${r.city}</div>` },
     ...(showRegion ? [{ key:"region", label:"Region", render: r => regionTag(r.region) }] : []),
     { key:"control", label:"Type",         render: r => controlTag(r.control) },
     { key:"record",  label:"2025 Record",  render: r => r.record },
@@ -789,7 +804,7 @@ function buildCoachCards() {
     return `<div class="coach-card">
       <div class="coach-rank">Coach #${c.rank}</div>
       <div class="coach-name">${c.name}</div>
-      <div class="coach-school">${c.school} &mdash; ${c.city}</div>
+      <div class="coach-school">${SCHOOL_URLS[c.school] ? `<a href="${SCHOOL_URLS[c.school]}" target="_blank" rel="noopener">${c.school}</a>` : c.school} &mdash; ${c.city}</div>
       <div class="coach-meta">
         <span class="coach-pill">${c.record}</span>
         <span class="coach-pill">${controlTag(c.control)}</span>
@@ -936,6 +951,8 @@ function initMap() {
     m._schoolData = school;
     mapMarkers.push(m);
   });
+
+  populateCompareDropdowns();
 }
 
 function setMapFilter(type, val, btn) {
@@ -966,7 +983,7 @@ function showSchoolPanel(school) {
       <span class="tier ${tierClass(tier)}">${tier}</span>
       <span class="tag-${school.region === "Greensboro" ? "gsboro" : "twater"}">${school.region}</span>
     </div>
-    <div class="sp-name">${school.name}</div>
+    <div class="sp-name">${SCHOOL_URLS[school.name] ? `<a href="${SCHOOL_URLS[school.name]}" target="_blank" rel="noopener" style="color:inherit;border-bottom:1px solid var(--accent);text-decoration:none">${school.name}</a>` : school.name}</div>
     <div class="sp-city">${school.city} &bull; ${controlTag(school.control)}</div>
     ${scoreBar(school.score)}
     <div style="margin:14px 0 0">
@@ -1013,50 +1030,101 @@ function toggleCompare(schoolName) {
   if (school) showSchoolPanel(school);
 }
 
+function syncCompareSlotUI(i) {
+  const name = compareList[i];
+  const sel  = document.getElementById("cselect-" + i);
+  const xBtn = document.getElementById("cslot-" + i + "-x");
+  if (!sel) return;
+  if (name) {
+    sel.value = name;
+    sel.classList.add("filled");
+    if (xBtn) xBtn.style.display = "";
+  } else {
+    sel.value = "";
+    sel.classList.remove("filled");
+    if (xBtn) xBtn.style.display = "none";
+  }
+}
+
 function addToCompare(schoolName) {
   const slot = compareList.indexOf(null);
-  if (slot === -1) return; // already 2 selected
+  if (slot === -1) return;
   compareList[slot] = schoolName;
-  updateCompareBar();
+  syncCompareSlotUI(0);
+  syncCompareSlotUI(1);
+  document.getElementById("compare-go-btn").disabled = !(compareList[0] && compareList[1]);
+  highlightMarkerBriefly(schoolName);
 }
 
 function removeFromCompare(schoolName) {
   const idx = compareList.indexOf(schoolName);
   if (idx === -1) return;
   compareList[idx] = null;
-  // Pack nulls to end
   compareList = compareList.filter(Boolean);
   while (compareList.length < 2) compareList.push(null);
-  updateCompareBar();
+  syncCompareSlotUI(0);
+  syncCompareSlotUI(1);
+  document.getElementById("compare-go-btn").disabled = !(compareList[0] && compareList[1]);
 }
 
-function updateCompareBar() {
-  [0, 1].forEach(i => {
-    const name = compareList[i];
-    const slot = document.getElementById(`cslot-${i}`);
-    const nameEl = document.getElementById(`cslot-${i}-name`);
-    if (name) {
-      const short = name.length > 22 ? name.slice(0, 20) + "…" : name;
-      nameEl.textContent = short;
-      slot.classList.add("filled");
-      if (!slot.querySelector(".compare-slot-x")) {
-        const x = document.createElement("button");
-        x.className = "compare-slot-x";
-        x.textContent = "×";
-        x.onclick = () => removeFromCompare(name);
-        slot.appendChild(x);
-      } else {
-        slot.querySelector(".compare-slot-x").onclick = () => removeFromCompare(name);
-      }
-    } else {
-      nameEl.textContent = "Pick a school";
-      slot.classList.remove("filled");
-      const x = slot.querySelector(".compare-slot-x");
-      if (x) x.remove();
-    }
+function selectFromDropdown(slotIdx) {
+  const sel  = document.getElementById("cselect-" + slotIdx);
+  const name = sel.value;
+  if (!name) {
+    if (compareList[slotIdx]) removeFromCompare(compareList[slotIdx]);
+    return;
+  }
+  // Prevent same school in both slots
+  const other = slotIdx === 0 ? 1 : 0;
+  if (compareList[other] === name) {
+    compareList[other] = null;
+    syncCompareSlotUI(other);
+  }
+  compareList[slotIdx] = name;
+  syncCompareSlotUI(slotIdx);
+  document.getElementById("compare-go-btn").disabled = !(compareList[0] && compareList[1]);
+  highlightMarkerBriefly(name);
+}
+
+function clearCompareSlot(slotIdx) {
+  const name = compareList[slotIdx];
+  if (name) removeFromCompare(name);
+}
+
+function highlightMarkerBriefly(schoolName) {
+  if (!leafletMap) return;
+  const school = ALL_SCHOOLS.find(s => s.name === schoolName);
+  const c = COORDS[schoolName];
+  if (!school || !c) return;
+  leafletMap.flyTo([c.lat, c.lng], Math.max(leafletMap.getZoom(), 9), { duration: 0.8 });
+  const marker = mapMarkers.find(m => m._schoolData && m._schoolData.name === schoolName);
+  if (!marker) return;
+  const color = TIER_COLORS[school.tier] || "#888";
+  marker.setIcon(L.divIcon({
+    className: "",
+    html: `<div style="width:22px;height:22px;border-radius:50%;background:${color};border:3px solid #fff;box-shadow:0 0 14px ${color};"></div>`,
+    iconSize: [22, 22], iconAnchor: [11, 11],
+  }));
+  setTimeout(() => marker.setIcon(markerIcon(color)), 2500);
+}
+
+function populateCompareDropdowns() {
+  const tierOrder  = ["PLATINUM", "GOLD", "SILVER", "BRONZE"];
+  const tierLabels = { PLATINUM: "🏆 Platinum", GOLD: "🥇 Gold", SILVER: "🥈 Silver", BRONZE: "🥉 Bronze" };
+  const grouped    = { PLATINUM: [], GOLD: [], SILVER: [], BRONZE: [] };
+  ALL_SCHOOLS.forEach(s => { if (grouped[s.tier]) grouped[s.tier].push(s.name); });
+  tierOrder.forEach(t => grouped[t].sort((a, b) => b.localeCompare(a))); // Z→A within tier
+  let html = '<option value="">Pick a school…</option>';
+  tierOrder.forEach(t => {
+    if (!grouped[t].length) return;
+    html += `<optgroup label="${tierLabels[t]}">`;
+    grouped[t].forEach(n => { html += `<option value="${n.replace(/"/g,'&quot;')}">${n}</option>`; });
+    html += `</optgroup>`;
   });
-  const ready = compareList[0] && compareList[1];
-  document.getElementById("compare-go-btn").disabled = !ready;
+  ["cselect-0", "cselect-1"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+  });
 }
 
 // ── Compare Modal ──────────────────────────────────────────────────────────────
